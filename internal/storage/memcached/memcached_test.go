@@ -5,6 +5,7 @@ import (
 	"github.com/ehsundar/ghibli_people/pkg/ghp"
 	"github.com/stretchr/testify/suite"
 	"testing"
+	"time"
 )
 
 type basicFileReaderStorageTestSuite struct {
@@ -59,6 +60,28 @@ func (s *basicFileReaderStorageTestSuite) TestBasicMemCachedStorage_GetAllShould
 		s.Nil(err)
 		s.Equal(len(people), 2)
 		s.Equal(people[0].ID, "id1")
+	}
+
+	mockOtherStorage.AssertExpectations(s.T())
+}
+
+func (s *basicFileReaderStorageTestSuite) TestBasicMemCachedStorage_GetAllShouldWorkOnParallelCalls() {
+	mockOtherStorage := &mocks.PeopleStorage{}
+	mockOtherStorage.
+		On("GetAll").
+		Return([]*ghp.Person{s.person1, s.person2}, nil).
+		Once()
+
+	storage := New(mockOtherStorage)
+
+	for i := 0; i < 100; i++ {
+		go func() {
+			people, err := storage.GetAll()
+			s.Nil(err)
+			s.Equal(len(people), 2)
+			s.Equal(people[0].ID, "id1")
+		}()
+		time.Sleep(100 * time.Microsecond)
 	}
 
 	mockOtherStorage.AssertExpectations(s.T())
