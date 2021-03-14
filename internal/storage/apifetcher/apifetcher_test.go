@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestBasicAPIFetcherStorage_GetAllShouldReturnAtLeastOneElement(t *testing.T) {
+func TestBasicAPIFetcherStorage_GetAllShouldReturnAtLeastTenElement(t *testing.T) {
 	s := assert.New(t)
 
 	storage := New("https://ghibliapi.herokuapp.com")

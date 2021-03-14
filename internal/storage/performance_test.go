@@ -9,7 +9,6 @@ import (
 func BenchmarkFileReaderWithoutCache(b *testing.B) {
 	storage := filereader.New("/home/amir/Workspace/github.com/ehsundar/ghibli_people/static_people.json")
 
-	b.SetParallelism(1000)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_, err := storage.GetAll()
@@ -24,7 +23,6 @@ func BenchmarkMemCachedFileReader(b *testing.B) {
 	storage := filereader.New("/home/amir/Workspace/github.com/ehsundar/ghibli_people/static_people.json")
 	cachedStorage := memcached.New(storage)
 
-	b.SetParallelism(1000)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_, err := cachedStorage.GetAll()
