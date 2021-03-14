@@ -5,21 +5,16 @@ MODULE_DIRS = ./internal/storage
 LINTER = golangci-lint
 LINTER_VERSION = v1.31.0
 
-dependencies:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(GOPATH)/bin $(LINTER_VERSION)
-	go get github.com/vektra/mockery/v2/.../
-	go mod download
-
 ghp:
 	go build -o ghp .
-
-mocks:
-	mockery --all
 
 clean:
 	rm -rf mocks
 	rm -rf cover.out
 	rm -f ghp
+
+mocks:
+	mockery --all
 
 test: mocks
 	go test ./...
@@ -38,3 +33,8 @@ bench: mocks
 		cd $(dir) && \
 		go list . | xargs -n1 go test -bench=$(BENCH) -run=^$ $(BENCH_FLAGS) \
 	) &&) true
+
+dependencies:
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(GOPATH)/bin $(LINTER_VERSION)
+	go get github.com/vektra/mockery/v2/.../
+	go mod download
